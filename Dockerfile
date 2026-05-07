@@ -6,7 +6,8 @@ ARG BUILD_DATE
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=pt_BR.UTF-8 \
     LC_ALL=pt_BR.UTF-8 \
-    NVM_DIR=/home/claude/.nvm
+    NVM_DIR=/home/claude/.nvm \
+    PWTEST_CLI_HEADLESS=1
 
 # System packages — changes rarely, kept first for cache efficiency
 RUN apt-get update && apt-get install -y \
@@ -58,7 +59,8 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | b
     && . $NVM_DIR/nvm.sh \
     && nvm install 22 \
     && nvm alias default 22 \
-    && npm install -g @anthropic-ai/claude-code@latest playwright@latest get-shit-done-cc@latest
+    && npm install -g @anthropic-ai/claude-code@latest playwright@latest get-shit-done-cc@latest \
+    && playwright install chromium
 
 # Disponibiliza o nvm em shells de login; sessões SSH carregam .profile
 RUN echo 'export NVM_DIR="/home/claude/.nvm"' >> /home/claude/.profile \
@@ -72,6 +74,9 @@ RUN echo 'if [ -n "$SSH_CONNECTION" ] && [ -z "$TMUX" ]; then exec claude-tmux-m
 USER root
 COPY claude-tmux-menu /usr/local/bin/claude-tmux-menu
 RUN chmod +x /usr/local/bin/claude-tmux-menu
+RUN . /home/claude/.nvm/nvm.sh \
+    && playwright install-deps chromium \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/run/sshd \
     && sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config \
     && sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config \
