@@ -55,11 +55,11 @@ RUN usermod -l claude ubuntu && \
 USER claude
 WORKDIR /home/claude
 
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash \
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
     && nvm install 22 \
     && nvm alias default 22 \
-    && npm install -g @anthropic-ai/claude-code@latest playwright@latest get-shit-done-cc@latest \
+    && npm install -g @anthropic-ai/claude-code@latest playwright@latest @opengsd/get-shit-done-redux@latest \
     && playwright install chromium
 
 # Disponibiliza o nvm em shells de login; sessões SSH carregam .profile
