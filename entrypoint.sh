@@ -19,4 +19,12 @@ if [ ! -f "/home/claude/.claude/skills/gsd-help/SKILL.md" ] && [ ! -f "/home/cla
     su - claude -c 'export NVM_DIR=/home/claude/.nvm && export CLAUDE_CONFIG_DIR=/home/claude/.claude && . "$NVM_DIR/nvm.sh" && get-shit-done-redux --claude --global --portable-hooks' || echo "[entrypoint] GSD bootstrap failed — container will still start"
 fi
 
+# Install gitconfig files from /mnt/gitconfig volume into claude's home via symlinks.
+# Files must be named exactly as they should appear in ~ (e.g. .gitconfig, .gitconfig-work).
+if [ -d "/mnt/gitconfig" ]; then
+    for f in /mnt/gitconfig/.git*; do
+        [ -f "$f" ] && ln -sf "$f" "/home/claude/$(basename "$f")"
+    done
+fi
+
 exec /usr/sbin/sshd -D

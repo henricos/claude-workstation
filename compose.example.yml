@@ -8,8 +8,10 @@ services:
       - /opt/claude-workstation/.claude:/home/claude/.claude
       # SSH keys directory: authorized_keys (inbound access) + private key for GitHub (outbound access)
       - /opt/claude-workstation/.ssh:/home/claude/.ssh
-      # Git identity used by the agent when committing
-      - /opt/claude-workstation/gitconfig:/home/claude/.gitconfig:ro
+      # Git identity files used by the agent when committing.
+      # Place .gitconfig, .gitconfig-work, etc. in this directory — the entrypoint
+      # symlinks each file into ~/. Files must be named exactly as they appear in ~.
+      - /opt/claude-workstation/gitconfig:/mnt/gitconfig:ro
       # Your code repositories
       - /home/user/projects:/home/claude/work
       # Docker socket — gives the agent full access to the host Docker daemon (equivalent to root on
